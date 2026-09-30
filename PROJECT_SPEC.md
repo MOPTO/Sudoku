@@ -430,6 +430,14 @@ entry<GameKey> { key ->
 | **Completion** | When the reducer sets `Solved`, the VM stops the timer, saves the game as `SOLVED` with `completedAt`, and exposes the completion UI state. (The pool row was already removed when the game started, §4.7.) |
 | **Haptics** | Emitted as a state-driven "last feedback" token or done directly in the UI on action (lightweight). |
 
+- Milestone 6 status: the phone game screen is implemented in `ui/game/` (VM, mapper, timer) and `ui/game/components/`, with these refinements:
+  - `GameRepository` and `SettingsRepository` are interfaces. Until milestone 7 they are backed by `InMemoryGameRepository` (generates on demand with `PuzzleGenerator.generate`) and `DefaultSettingsRepository` (always the §6.2 defaults), so games do not survive process death yet: a restored `GameKey` whose game is gone shows `GameUiState.NotFound` and pops back to Home.
+  - `GameScreenAction` also has `ScreenResumed`/`ScreenPaused` (sent by `LifecycleResumeEffect`) and `DismissCompletion` (closes the dialog, the solved board stays visible). The timer runs while the game is in progress, the player hasn't pressed Pause, and the screen is resumed. It resumes by itself when the screen comes back, while a Pause the player pressed stays until Resume. `ScreenPaused` and `Pause` save at once.
+  - `ScreenState` (paused, solved time, dialog dismissed, next game id) is the VM's screen-level state next to `GameState`. The completion dialog appears once the VM has stopped the timer and recorded the solve time.
+  - Home has a temporary quick-start (size, difficulty, timer) instead of the New-game sheet (milestone 7). The top-bar menu and haptics also come in milestone 7, and hints (`RequestHint`, Hint button, hint panel, hint-focus highlight) in milestone 10.
+  - `MaterialTheme.motionScheme` is still internal in Material 3 1.4.0, so cell backgrounds use `animateColorAsState`'s default spec. Switch to `motionScheme.fastEffectsSpec()` (§7.6) once it is public.
+  - `SudokuColors` (§8.1) is already provided by `SudokuTheme`, derived from the template color scheme. Milestone 8 adds the palettes.
+
 ### 5.2 Navigation (Nav3)
 
 ```kotlin
