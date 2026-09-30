@@ -2,6 +2,7 @@ package com.ariadna.sudoku.core.generator
 
 import com.ariadna.sudoku.core.TestGrids.isValidSolution
 import com.ariadna.sudoku.core.TestGrids.respectsGivens
+import com.ariadna.sudoku.core.grading.DifficultyGrader
 import com.ariadna.sudoku.core.grading.DifficultyProfile
 import com.ariadna.sudoku.core.model.GridSpec
 import com.ariadna.sudoku.core.solver.BruteForceSolver
@@ -36,6 +37,9 @@ class PuzzleGeneratorPropertyTest {
                     assertEquals(1, BruteForceSolver.countSolutions(puzzle.givens), "$label: not unique")
                     assertTrue(puzzle.clueCount in profile.minClues..profile.maxClues, "$label: ${puzzle.clueCount} clues")
                     assertTrue(givens.indices.all { (givens[it] == 0) == (givens[givens.size - 1 - it] == 0) }, "$label: not symmetric")
+                    val grade = DifficultyGrader.grade(puzzle.givens)
+                    assertEquals(grade, puzzle.grade, "$label: recorded grade differs")
+                    assertTrue(profile.accepts(grade), "$label: grade $grade outside ${profile.tiers}")
 
                     // Reproducible from the recorded seed alone, and generate() is deterministic.
                     assertEquals(puzzle, PuzzleGenerator.attempt(spec, difficulty, puzzle.seed), "$label: attempt differs")

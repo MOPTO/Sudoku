@@ -2,6 +2,7 @@ package com.ariadna.sudoku.core.generator
 
 import com.ariadna.sudoku.core.grading.Difficulty
 import com.ariadna.sudoku.core.grading.DifficultyProfile
+import com.ariadna.sudoku.core.logic.Tier
 import com.ariadna.sudoku.core.model.GridSpec
 import com.ariadna.sudoku.core.solver.BruteForceSolver
 import kotlinx.coroutines.CoroutineStart
@@ -34,6 +35,29 @@ class PuzzleGeneratorBehaviourTest {
         }
         assertEquals(clues.min(), result.puzzle.clueCount)
         assertTrue(result.puzzle.seed in chain)
+    }
+
+    @Test
+    fun fallbackPicksTheSmallestMiss() = runBlocking {
+        // T2 never occurs on 4×4 (every unique 4×4 puzzle falls to T1), so every attempt misses the tier.
+        val profile = DifficultyProfile(4, 5, Tier.T2..Tier.T2)
+        val config = GenerationConfig(maxAttempts = 8)
+        val result = PuzzleGenerator.generate(GridSpec.Mini4, Difficulty.Medium, profile, seed = 3, config)
+
+        assertFalse(result.inRange)
+        val attempts = generateSequence(3L) { splitMix64(it) }.take(8)
+            .map { PuzzleGenerator.runAttempt(GridSpec.Mini4, Difficulty.Medium, profile, it, config) }
+            .toList()
+        assertEquals(attempts.minBy { it.miss }.puzzle, result.puzzle)
+    }
+
+    @Test
+    fun missComparesTierBeforeCluesBeforeScore() {
+        fun miss(tier: Int, clues: Int, score: Int) = PuzzleGenerator.Miss(tier, clues, score)
+        assertTrue(miss(0, 5, 100) < miss(1, 0, 0))
+        assertTrue(miss(0, 1, 100) < miss(0, 2, 0))
+        assertTrue(miss(0, 0, 1) < miss(0, 0, 2))
+        assertTrue(miss(0, 0, 0).isZero)
     }
 
     @Test

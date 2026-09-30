@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:01:03.039Z" hostname="DIBILPC" time="0.032">
+<testsuite name="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:21:54.750Z" hostname="DIBILPC" time="0.031">
   <properties/>
-  <testcase name="unofferedPairIsRejected()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.013"/>
-  <testcase name="cancellationStopsGeneration()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.005"/>
-  <testcase name="seedChainProducesDistinctSeeds()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.009"/>
-  <testcase name="fallsBackToClosestAttemptWhenBudgetRunsOut()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.005"/>
+  <testcase name="unofferedPairIsRejected()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.012"/>
+  <testcase name="cancellationStopsGeneration()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.004"/>
+  <testcase name="missComparesTierBeforeCluesBeforeScore()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.0"/>
+  <testcase name="fallbackPicksTheSmallestMiss()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.007"/>
+  <testcase name="seedChainProducesDistinctSeeds()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.001"/>
+  <testcase name="fallsBackToClosestAttemptWhenBudgetRunsOut()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorBehaviourTest" time="0.004"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -1,7 +1,10 @@
 package com.ariadna.sudoku.core.generator
 
 import com.ariadna.sudoku.core.TestGrids.respectsGivens
+import com.ariadna.sudoku.core.grading.DifficultyGrader
 import com.ariadna.sudoku.core.grading.DifficultyProfile
+import com.ariadna.sudoku.core.logic.LogicalSolver
+import com.ariadna.sudoku.core.logic.Tier
 import com.ariadna.sudoku.core.model.Grid
 import com.ariadna.sudoku.core.model.GridSpec
 import com.ariadna.sudoku.core.solver.BruteForceSolver
@@ -9,6 +12,7 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class PuzzleDiggerTest {
@@ -36,6 +40,42 @@ class PuzzleDiggerTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun staysWithinTheTierCeiling() {
+        for ((spec, profile) in cases) {
+            val capped = profile.copy(tiers = Tier.T1..Tier.T2)
+            for (seed in 0L until 30L) {
+                val random = Random(seed)
+                val solution = SolutionGenerator.generate(spec, random)
+                val givens = PuzzleDigger.dig(spec, solution, capped, random, symmetric = true)
+                assertTrue(LogicalSolver(Tier.T2).solves(Grid.ofGivens(spec, givens)), "${spec.size}x${spec.size} seed=$seed")
+            }
+        }
+    }
+
+    @Test
+    fun keepsDiggingBelowTheTargetToReachTheTierFloor() {
+        // Floor T3 with the whole clue range open: whenever the result is still easier than T3, digging
+        // must have continued as far as the ceiling allows (no single removal left that stays within T3).
+        val spec = GridSpec.Classic
+        val profile = DifficultyProfile(22, 45, Tier.T3..Tier.T3)
+        var metFloor = 0
+        for (seed in 0L until 30L) {
+            val random = Random(seed)
+            val solution = SolutionGenerator.generate(spec, random)
+            val givens = PuzzleDigger.dig(spec, solution, profile, random, symmetric = false)
+            if (DifficultyGrader.grade(Grid.ofGivens(spec, givens)).tier >= Tier.T3) {
+                metFloor++
+            } else if (givens.count { it != 0 } > profile.minClues) {
+                val removable = givens.indices.filter { givens[it] != 0 }.any { cell ->
+                    LogicalSolver(Tier.T3).solves(Grid.ofGivens(spec, givens.copyOf().also { it[cell] = 0 }))
+                }
+                assertFalse(removable, "seed=$seed stopped early")
+            }
+        }
+        assertTrue(metFloor > 0)
     }
 
     @Test

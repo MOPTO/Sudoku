@@ -22,12 +22,14 @@ class GeneratorBenchmarkTest {
                 val nanos = runs.map { it.first }.sorted()
                 val results = runs.map { it.second }
                 println(
-                    "generate %dx%d %-6s p50=%.2f ms p95=%.2f ms attempts=%.2f inRange=%d%% clues=%.1f".format(
+                    "generate %dx%d %-6s p50=%.2f ms p95=%.2f ms attempts=%.2f inRange=%d%% clues=%.1f score=%.0f tiers=%s".format(
                         spec.size, spec.size, difficulty,
                         nanos[nanos.size / 2] / 1e6, nanos[nanos.size * 95 / 100] / 1e6,
                         results.map { it.attempts }.average(),
                         results.count { it.inRange } * 100 / results.size,
                         results.map { it.puzzle.clueCount }.average(),
+                        results.map { it.puzzle.grade.score }.average(),
+                        results.groupingBy { it.puzzle.grade.tier }.eachCount().toSortedMap(),
                     ),
                 )
             }

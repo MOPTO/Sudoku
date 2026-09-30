@@ -189,8 +189,21 @@ for cell in order:
 - The **ceiling check** (the logical solver restricted to techniques ≤ target tier) guarantees the puzzle is *not harder* than requested.
 - After digging, the **floor check** makes sure the puzzle is *not easier* than requested: the grader must report `hardestTechnique.tier` within the profile's tier range (and `score ≥ profile.minScore`). If it fails, the attempt returns `null`.
 - **Retries stay deterministic:** the outer loop derives the next seed from the previous one (`seed = splitMix64(seed)`) and calls `attempt(spec, difficulty, seed)` again. The seed recorded with the puzzle is the one whose attempt succeeded, so re-running a single attempt with that seed reproduces the puzzle exactly.
-- Budget: stop after `maxAttempts` or when the coroutine is cancelled (`ensureActive()` inside loops). If the budget runs out, return the best-so-far attempt (closest score within the ceiling; until the grader exists (milestone 3), "closest" means the clue count nearest the profile's range).
+- Budget: stop after `maxAttempts` or when the coroutine is cancelled (`ensureActive()` inside loops). If the budget runs out, return the best-so-far attempt: the smallest miss, compared first by the tier gap, then the clue-count gap, then the score shortfall.
+- **Floor-seeking:** if the puzzle is still easier than the profile's tier floor when the digger reaches its target, it keeps digging towards `minClues` until the floor is met (the ceiling still applies to every removal).
+- **Uniqueness shortcut:** when the profile has a ceiling, the logical solve replaces the brute-force count: every logical step is a sound deduction, so solving the grid by logic alone proves the solution is unique. Profiles whose tier range reaches above the implemented techniques have no checkable ceiling and use the brute-force count.
 - Milestone 3 status: implemented in `core/generator/` (symmetric digging on by default). Measured on a desktop JVM: every offered pair, 9×9 Expert included, hits its clue range in ≈ 1–2 attempts and < 2 ms p95.
+- Milestone 4 status: ceiling and floor checks in place, `GENERATOR_VERSION = 2`, and the default budget is `maxAttempts = 500`. Measured on a desktop JVM (100 seeds per pair), every offered pair is 100 % in range:
+
+  | Pair | Average attempts | p95 |
+  |------|------------------|-----|
+  | 4×4 and 6×6 Easy/Medium, 9×9 Easy | 1–4 | < 1 ms |
+  | 9×9 Hard | ≈ 4 | 4 ms |
+  | 9×9 Expert | ≈ 9 | 10 ms |
+  | 6×6 Hard | ≈ 35 | 6 ms |
+  | 9×9 Medium | ≈ 25 | 38 ms |
+
+  9×9 Medium is the slowest because T3 is rare at 30–37 clues.
 
 ### 4.5 Logical solver & difficulty grading
 
@@ -199,6 +212,7 @@ The logical solver repeatedly finds the **easiest applicable step** (technique l
 - **Tier** = hardest technique the puzzle needed.
 - **Score** = Σ technique base cost per step (distinguishes "easy Hard" from "hard Hard" within a tier). Internal only: used by the generator and for tuning, never shown to the player.
 - If the solver gets stuck with all techniques, the puzzle is **Extreme** (needs chains/bifurcation). It is still valid because uniqueness is guaranteed.
+- While only some tiers are implemented, a stuck grade reports `tier = LogicalSolver.MAX_TIER + 1` (T4 while T1–T3 exist) as a **lower bound** ("needs something beyond what's implemented"). It follows `MAX_TIER` automatically as tiers are added.
 
 Techniques, with the implementation order in brackets. References: sudokuwiki.org strategy list, HoDoKu, Sudoku Explainer ratings.
 
@@ -221,12 +235,18 @@ Clue counts are **bounds for the digger, not the definition of difficulty**. The
 | UI label | 4×4 | 6×6 | 9×9 (clue range, tier) |
 |----------|-----|-----|------------------------|
 | **Easy** | 6–10 givens, T1 | 16–24, ≤ T2 | 36–45, ≤ T2 |
-| **Medium** | 4–7, T2 | 12–16, T3 | 30–37, T3 required |
-| **Hard** | — | 9–13, T4 | 26–31, T4 required |
+| **Medium** | 4–7, T1 | 10–14, T2 required | 30–37, T3 required |
+| **Hard** | — | 9–12, T3 or beyond | 26–31, T4 required |
 | **Expert** | — | — | 22–27, beyond T4 (v1) / T5 required (post-v1) |
 | **Master** (post-v1) | — | — | 17–25, T6/T7 |
 
-(Mathematical minimums: 4×4 = 4 clues, 6×6 = 8, 9×9 = 17.) Easy on 4×4 and 6×6 is the gentlest entry point for beginners and children; there is **no separate kids mode**. Keep these numbers in `DifficultyProfile` tables so they are easy to tune after play-testing.
+(Mathematical minimums: 4×4 = 4 clues, 6×6 = 8, 9×9 = 17.)
+
+**Small grids sit lower on the ladder** (measured in milestone 4 over 2000 near-minimal digs per size):
+- **4×4:** every unique puzzle falls to T1, so the two 4×4 difficulties differ only in clue count.
+- **6×6:** T3 steps are rare (≈ 0.3 %). Medium is therefore "hidden single required", and Hard is "the T2 solver gets stuck".
+
+**Interim until T4 exists (milestones 4–10):** 9×9 Hard and Expert both mean "the T1–T3 solver gets stuck" (tier range T4..T7, no checkable ceiling), and differ only in clue range. Milestone 11 tightens Hard to T4 and Expert to T5..T7. Easy on 4×4 and 6×6 is the gentlest entry point for beginners and children; there is **no separate kids mode**. Keep these numbers in `DifficultyProfile` tables so they are easy to tune after play-testing.
 
 ### 4.7 Puzzle pool (instant "New game")
 

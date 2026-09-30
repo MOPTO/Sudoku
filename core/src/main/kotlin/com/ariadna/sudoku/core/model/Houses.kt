@@ -47,6 +47,14 @@ class Houses private constructor(val spec: GridSpec) {
         }
     }
 
+    /** Kind of the house at index [house] in [all]. */
+    fun kind(house: Int): HouseKind = when (house / spec.size) {
+        0 -> HouseKind.Row
+        1 -> HouseKind.Column
+        2 -> HouseKind.Box
+        else -> throw IndexOutOfBoundsException("house $house")
+    }
+
     companion object {
         private val cache = ConcurrentHashMap<GridSpec, Houses>()
 
@@ -54,3 +62,5 @@ class Houses private constructor(val spec: GridSpec) {
         fun of(spec: GridSpec): Houses = cache.getOrPut(spec) { Houses(spec) }
     }
 }
+
+enum class HouseKind { Row, Column, Box }

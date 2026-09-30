@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ariadna.sudoku.core.model.HousesTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:01:03.253Z" hostname="DIBILPC" time="0.011">
+<testsuite name="com.ariadna.sudoku.core.model.HousesTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:21:56.658Z" hostname="DIBILPC" time="0.011">
   <properties/>
-  <testcase name="invalidSpecIsRejected()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.001"/>
-  <testcase name="everyCellIsInExactlyThreeHouses()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.003"/>
+  <testcase name="invalidSpecIsRejected()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.0"/>
+  <testcase name="everyCellIsInExactlyThreeHouses()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.002"/>
   <testcase name="boxesMatchCellIndexHelper()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.001"/>
   <testcase name="housesAreCachedPerSpec()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.001"/>
   <testcase name="everyHouseHasSizeDistinctCells()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.001"/>

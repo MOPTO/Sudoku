@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ariadna.sudoku.core.solver.SolverBenchmarkTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:01:03.275Z" hostname="DIBILPC" time="0.022">
+<testsuite name="com.ariadna.sudoku.core.solver.SolverBenchmarkTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:21:56.683Z" hostname="DIBILPC" time="0.039">
   <properties/>
-  <testcase name="uniquenessCheckTiming()" classname="com.ariadna.sudoku.core.solver.SolverBenchmarkTest" time="0.022"/>
-  <system-out><![CDATA[countSolutions 6x6 (12 clues): p50=0.007 ms, p95=0.016 ms
-countSolutions 9x9 (28 clues): p50=0.021 ms, p95=0.034 ms
+  <testcase name="uniquenessCheckTiming()" classname="com.ariadna.sudoku.core.solver.SolverBenchmarkTest" time="0.039"/>
+  <system-out><![CDATA[countSolutions 6x6 (12 clues): p50=0.011 ms, p95=0.014 ms
+countSolutions 9x9 (28 clues): p50=0.034 ms, p95=0.053 ms
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

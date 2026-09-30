@@ -1,6 +1,7 @@
 package com.ariadna.sudoku.core.generator
 
 import com.ariadna.sudoku.core.grading.Difficulty
+import com.ariadna.sudoku.core.grading.DifficultyGrader
 import com.ariadna.sudoku.core.grading.DifficultyProfile
 import com.ariadna.sudoku.core.model.Grid
 import com.ariadna.sudoku.core.model.GridSpec
@@ -49,7 +50,7 @@ object PuzzleGenerator {
             context.ensureActive()
             val attempt = runAttempt(spec, difficulty, profile, attemptSeed, config) { context.ensureActive() }
             if (attempt.inRange) return GenerationResult(attempt.puzzle, inRange = true, attempts = n)
-            if (best == null || attempt.distance < best.distance) best = attempt
+            if (best == null || attempt.miss < best.miss) best = attempt
             attemptSeed = splitMix64(attemptSeed)
         }
         return GenerationResult(best!!.puzzle, inRange = false, attempts = config.maxAttempts)
@@ -66,20 +67,36 @@ object PuzzleGenerator {
         val random = Random(seed)
         val solution = SolutionGenerator.generate(spec, random)
         val givens = PuzzleDigger.dig(spec, solution, profile, random, config.symmetric, checkpoint)
-        val puzzle = Puzzle(spec, difficulty, seed, Grid.ofGivens(spec, givens), solution)
-        // Floor check. Milestone 4 adds the grader's tier range and minimum score here.
+        val grid = Grid.ofGivens(spec, givens)
+        val grade = DifficultyGrader.grade(grid)
+        val puzzle = Puzzle(spec, difficulty, seed, grid, solution, grade)
+        // Floor check: tier range, clue range and minimum score.
         val clues = puzzle.clueCount
-        val distance = maxOf(0, clues - profile.maxClues) + maxOf(0, profile.minClues - clues)
-        return Attempt(puzzle, distance)
+        val miss = Miss(
+            tierGap = gap(grade.tier.ordinal, profile.tiers.start.ordinal, profile.tiers.endInclusive.ordinal),
+            clueGap = gap(clues, profile.minClues, profile.maxClues),
+            scoreGap = maxOf(0, profile.minScore - grade.score),
+        )
+        return Attempt(puzzle, miss)
     }
+
+    /** How far [value] lies outside [min]..[max] (0 = inside). */
+    private fun gap(value: Int, min: Int, max: Int): Int = maxOf(0, value - max) + maxOf(0, min - value)
 
     private fun profileOf(spec: GridSpec, difficulty: Difficulty): DifficultyProfile =
         requireNotNull(DifficultyProfile.of(spec, difficulty)) {
             "$difficulty is not offered for ${spec.size}x${spec.size}"
         }
 
-    /** One attempt's puzzle and how far its clue count lies outside the profile (0 = within it). */
-    internal class Attempt(val puzzle: Puzzle, val distance: Int) {
-        val inRange: Boolean get() = distance == 0
+    /** How far an attempt misses its profile. Compared tier first, then clues, then score. */
+    internal data class Miss(val tierGap: Int, val clueGap: Int, val scoreGap: Int) : Comparable<Miss> {
+        val isZero: Boolean get() = tierGap == 0 && clueGap == 0 && scoreGap == 0
+
+        override fun compareTo(other: Miss): Int = compareValuesBy(this, other, { it.tierGap }, { it.clueGap }, { it.scoreGap })
+    }
+
+    /** One attempt's puzzle and how far it lies outside the profile. */
+    internal class Attempt(val puzzle: Puzzle, val miss: Miss) {
+        val inRange: Boolean get() = miss.isZero
     }
 }
