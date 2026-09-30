@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:01:03.004Z" hostname="DIBILPC" time="0.034">
+  <properties/>
+  <testcase name="digsUniquePuzzlesWithinBounds()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.03"/>
+  <testcase name="sameRandomSameGivens()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.001"/>
+  <testcase name="callsCheckpointWhileDigging()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

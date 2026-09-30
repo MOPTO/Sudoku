@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ariadna.sudoku.core.generator.GeneratorBenchmarkTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:01:02.666Z" hostname="DIBILPC" time="0.337">
+  <properties/>
+  <testcase name="generationTiming()" classname="com.ariadna.sudoku.core.generator.GeneratorBenchmarkTest" time="0.337"/>
+  <system-out><![CDATA[generate 4x4 Easy   p50=0.04 ms p95=0.08 ms attempts=1.00 inRange=100% clues=7.5
+generate 4x4 Medium p50=0.04 ms p95=0.09 ms attempts=1.00 inRange=100% clues=5.1
+generate 6x6 Easy   p50=0.11 ms p95=0.19 ms attempts=1.00 inRange=100% clues=19.7
+generate 6x6 Medium p50=0.12 ms p95=0.25 ms attempts=1.00 inRange=100% clues=13.7
+generate 6x6 Hard   p50=0.14 ms p95=0.30 ms attempts=1.11 inRange=100% clues=11.6
+generate 9x9 Easy   p50=0.19 ms p95=0.25 ms attempts=1.00 inRange=100% clues=40.5
+generate 9x9 Medium p50=0.27 ms p95=0.46 ms attempts=1.00 inRange=100% clues=33.3
+generate 9x9 Hard   p50=0.29 ms p95=0.59 ms attempts=1.05 inRange=100% clues=28.6
+generate 9x9 Expert p50=0.67 ms p95=1.86 ms attempts=2.18 inRange=100% clues=26.1
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

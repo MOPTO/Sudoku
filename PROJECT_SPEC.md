@@ -175,9 +175,11 @@ class Houses(spec: GridSpec) {
 
 ```
 givens = full solution
+target = random clue count in [profile.minClues, profile.maxClues]   // varies clue counts within a tier
 order  = shuffled cell list (optionally as symmetric pairs: cell & its 180° mirror → classic look)
 for cell in order:
-    if givens.count <= profile.minClues: break
+    if givens.count <= target: break
+    if removing cell (and its mirror) would go below profile.minClues: continue
     candidate = givens with cell (and its mirror) removed
     if countSolutions(candidate, 2) != 1: continue            // must stay unique
     if !LogicalSolver(profile.maxTechnique).solves(candidate): continue   // must stay within target ceiling
@@ -187,7 +189,8 @@ for cell in order:
 - The **ceiling check** (the logical solver restricted to techniques ≤ target tier) guarantees the puzzle is *not harder* than requested.
 - After digging, the **floor check** makes sure the puzzle is *not easier* than requested: the grader must report `hardestTechnique.tier` within the profile's tier range (and `score ≥ profile.minScore`). If it fails, the attempt returns `null`.
 - **Retries stay deterministic:** the outer loop derives the next seed from the previous one (`seed = splitMix64(seed)`) and calls `attempt(spec, difficulty, seed)` again. The seed recorded with the puzzle is the one whose attempt succeeded, so re-running a single attempt with that seed reproduces the puzzle exactly.
-- Budget: stop after `maxAttempts` or when the coroutine is cancelled (`ensureActive()` inside loops). If the budget runs out, return the best-so-far attempt (closest score within the ceiling).
+- Budget: stop after `maxAttempts` or when the coroutine is cancelled (`ensureActive()` inside loops). If the budget runs out, return the best-so-far attempt (closest score within the ceiling; until the grader exists (milestone 3), "closest" means the clue count nearest the profile's range).
+- Milestone 3 status: implemented in `core/generator/` (symmetric digging on by default). Measured on a desktop JVM: every offered pair, 9×9 Expert included, hits its clue range in ≈ 1–2 attempts and < 2 ms p95.
 
 ### 4.5 Logical solver & difficulty grading
 
@@ -545,12 +548,42 @@ In **DigitFirst** mode, the "selected" concept is the locked digit: all its cell
 
 - **Home**: "Continue" card (in-progress game: size, difficulty, progress %, and time if timed), **New game**, Statistics, Settings.
 - **New-game sheet**: size chips (4×4, 6×6, 9×9; later 8×8/12×12/16×16), variant chips (Classic; later Diagonal, Windoku), difficulty segmented control filtered to the difficulties that size supports (§4.6), and a **Timer** switch. It opens pre-filled from `lastNewGame` and saves the choice back when "Start" is pressed (§6.2).
-- **Completion dialog**: a gentle celebration animation, then time (if timed), mistakes (if Immediate mode), hints used, "Next puzzle (same settings)", "Home". No scores, ratings or badges.
+- **Completion dialog**: a standard M3 `AlertDialog` with time (if timed), mistakes (if Immediate mode), hints used, "Next puzzle (same settings)", "Home". No scores, ratings, badges or celebration effects.
 - **Statistics** (kept light): per (size, difficulty): puzzles solved, and best/average time over timed games. No win %, no streaks.
 
-### 7.6 Nice-to-haves (post-v1)
+### 7.6 Motion & animation
 
-Techniques help screen (explained with mini boards), animated completion of a house/row, sound effects, shareable puzzle code (`spec-difficulty-seed-version`) and import of a puzzle by code, a "reveal solution" option.
+**Principle: use only the platform and Material 3 defaults.** Follow the official Android guidance. No custom choreography, hand-picked durations, custom easing curves, or decorative effects (confetti, wobble, bounce, particles, flips). Motion should explain a change of state, not decorate it.
+
+**Screen transitions (Navigation 3).** `NavDisplay` animates between destinations automatically. Do **not** pass `transitionSpec`, `popTransitionSpec` or `predictivePopTransitionSpec` to `NavDisplay`, and do not set the per-entry `NavDisplay.TransitionKey` / `PopTransitionKey` / `PredictivePopTransitionKey` metadata. The library defaults are used for forward, back and predictive-back navigation.
+
+**Predictive back.** The app targets API 37 (≥ 36), so predictive back and the system back-to-home animation are on by default. No `android:enableOnBackInvokedCallback` manifest flag is needed. Don't intercept back with custom `BackHandler`/`PredictiveBackHandler` animations; leave it to Nav3 and the Material components.
+
+**Material components animate themselves.** `ModalBottomSheet` (New-game sheet, including its built-in predictive-back animation), `AlertDialog`, `DropdownMenu`, `Snackbar`, `Switch`, segmented buttons, chips and the ripple/pressed states on the number pad and toolbar all use their built-in motion. Don't wrap or override it.
+
+**Motion scheme.** `MaterialTheme` keeps its default `MotionScheme.standard()`. Don't use `expressive()`, whose springier motion doesn't fit a calm game. When the app animates its own UI, it takes specs from `MaterialTheme.motionScheme`, never from literal `tween(…)`/`spring(…)` values:
+- colour and alpha changes → `motionScheme.defaultEffectsSpec()` (or `fastEffectsSpec()` for per-tap feedback)
+- size and position changes → `motionScheme.defaultSpatialSpec()`
+
+**The complete list of app-level animations** (anything not listed here is not animated):
+
+| What changes | API (per the Compose animation quick guide) |
+|--------------|---------------------------------------------|
+| Cell background when selection/highlights change | `animateColorAsState(target, motionScheme.fastEffectsSpec())` drawn with `Modifier.drawBehind` (not `Modifier.background`, to avoid extra recompositions) |
+| Board colors when the palette or light/dark mode changes | `animateColorAsState` on the `SudokuColors` tokens with `defaultEffectsSpec()` |
+| Showing/hiding UI parts: hint panel, Check button, pause overlay, Continue card | `AnimatedVisibility` with its default enter/exit |
+| Hint panel text changing between levels (nudge → technique → reveal) | `AnimatedContent` with its default transition |
+| Hint panel height following its text | `Modifier.animateContentSize()` |
+
+Not animated: digit entry/erase (the value simply appears), stacked ↔ side-by-side layout switches on rotate/resize (the system handles configuration changes), and puzzle completion (the dialog's own default appearance is enough).
+
+**Performance** (from the official guidance): animate colors in the draw phase (`drawBehind`), use `graphicsLayer {}` / lambda-based modifiers for anything else, and read animated values as late as possible so animations don't recompose the board.
+
+**Accessibility.** Compose animations follow the system animation-scale setting, so with **Settings → Accessibility → Remove animations** everything snaps instantly. Using only standard APIs gives us this for free. Never bypass it (e.g. with manually driven frame loops). The release accessibility pass includes a run with animations removed.
+
+### 7.7 Nice-to-haves (post-v1)
+
+Techniques help screen (explained with mini boards), sound effects, shareable puzzle code (`spec-difficulty-seed-version`) and import of a puzzle by code, a "reveal solution" option.
 
 ---
 
@@ -631,7 +664,7 @@ fun SudokuTheme(settings: ThemeSettings, content: @Composable () -> Unit) {
 
 - The theme reads settings via the `MainActivity`-level `SettingsViewModel`/repository, so a change applies app-wide instantly.
 - **No theme flash on startup:** DataStore loads asynchronously, so `MainActivity` keeps the splash screen up (`installSplashScreen().setKeepOnScreenCondition { settings.value == null }`) until the first `UserSettings` value has arrived. Only then is the themed content drawn.
-- Animate palette switches with `animateColorAsState` on the board tokens (optional polish).
+- Palette switches animate the board tokens with `animateColorAsState` as described in §7.6.
 - Status/navigation bar icon contrast follows `dark` (`enableEdgeToEdge(SystemBarStyle.auto(...))`).
 - The splash screen uses a neutral background that works with every palette.
 - Typography: a clear, friendly, tabular-figure font for digits (e.g. *Inter* or *Nunito*, bundled). Digits must be equal width.
@@ -910,13 +943,13 @@ Each milestone ends in a runnable, tested state. **v1 = milestones 1–13.** Eve
 10. **Hints.** HintEngine (mistake → bad note → logical step → reveal fallback), off-main-thread computation, 3-level reveal UI, explanations.
 11. **Techniques T4 + pool.** Hard tier and v1 Expert ("beyond T4"), puzzle pool with background refill, generation progress/cancel.
 12. **Statistics.** Simple stats screen (solved count, best/average time for timed games).
-13. **Release prep.** R8, baseline profile (optional), accessibility pass (TalkBack walk-through, contrast), app icon, Play listing.
+13. **Release prep.** R8, baseline profile (optional), accessibility pass (TalkBack walk-through, contrast, "Remove animations" on), app icon, Play listing.
 
 **Post-v1 (1.x)**
 
 14. **Techniques T5/T6.** Proper Expert, plus Master.
 15. **Variants & sizes.** Diagonal & Windoku (houses + generator constraints + board tinting), 8×8/12×12/16×16 sizes.
-16. **Nice-to-haves** from §7.6.
+16. **Nice-to-haves** from §7.7.
 
 ---
 
@@ -939,6 +972,7 @@ Each milestone ends in a runnable, tested state. **v1 = milestones 1–13.** Eve
 - Navigation 3 release notes / Scenes / list-detail recipe: https://developer.android.com/jetpack/androidx/releases/navigation3, https://developer.android.com/guide/navigation/navigation-3/scenes, https://developer.android.com/guide/navigation/navigation-3/recipes/scenes-listdetail, https://github.com/android/nav3-recipes
 - Lifecycle (incl. `lifecycle-viewmodel-navigation3`): https://developer.android.com/jetpack/androidx/releases/lifecycle
 - Material 3 Adaptive: https://developer.android.com/jetpack/androidx/releases/compose-material3-adaptive
+- Animation: Nav3 destination transitions https://developer.android.com/guide/navigation/navigation-3/animate-destinations; Compose animation quick guide https://developer.android.com/develop/ui/compose/animation/quick-guide; predictive back https://developer.android.com/develop/ui/compose/system/predictive-back-setup and https://developer.android.com/about/versions/16/behavior-changes-16; `MotionScheme` https://developer.android.com/reference/kotlin/androidx/compose/material3/MotionScheme
 - Compose BOM mapping: https://developer.android.com/develop/ui/compose/bom/bom-mapping
 - Hilt (androidx) / Dagger releases: https://developer.android.com/jetpack/androidx/releases/hilt, https://github.com/google/dagger/releases
 - Room: https://developer.android.com/jetpack/androidx/releases/room
