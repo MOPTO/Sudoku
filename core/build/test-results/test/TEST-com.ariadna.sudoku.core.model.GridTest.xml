@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ariadna.sudoku.core.model.GridTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:21:56.653Z" hostname="DIBILPC" time="0.005">
+<testsuite name="com.ariadna.sudoku.core.model.GridTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:34:26.941Z" hostname="DIBILPC" time="0.005">
   <properties/>
   <testcase name="parseMarksNonEmptyCellsAsGivens()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.0"/>
   <testcase name="equalityIsByContent()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.0"/>
   <testcase name="gridIsNotMutatedThroughAccessors()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.0"/>
   <testcase name="largeGridsUseLetters()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.001"/>
   <testcase name="roundTripForEverySize()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.0"/>
-  <testcase name="badInputIsRejected()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.001"/>
+  <testcase name="badInputIsRejected()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.0"/>
   <testcase name="dotsAreEmpty()" classname="com.ariadna.sudoku.core.model.GridTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

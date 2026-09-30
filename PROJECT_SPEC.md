@@ -340,6 +340,13 @@ fun GameState.reduce(action: GameAction, rules: GameRules): GameState   // pure 
 - The reducer is **pure, cheap and fully unit-tested**. The ViewModel only orchestrates.
 - Solved condition: `values contentEquals solution` → `status = Solved`. There is no lose condition.
 - Use `IntArray` internally for speed. Override `equals`/`hashCode` (or wrap arrays) because data-class equality on arrays is reference-based. The reducer always copies arrays before changing them (never mutates in place).
+- Milestone 5 status: implemented in `core/game/` (reducer in `GameReducer.kt`), with these refinements to the sketch above:
+  - `Move = {cell?, changes: List<CellChange>}`, where each `CellChange` holds one cell's old/new value and notes. Peer notes cleared by auto-remove, auto-notes and hint reveals are therefore each **one** undoable move. `History` keeps the last 200 moves itself.
+  - Entering the digit a cell already holds erases it (also in digit-first mode). Undo/redo selects the move's `cell` (auto-notes has none and keeps the selection).
+  - Each hint level counts as one hint use; level 3 applies the hint as a normal move and keeps it shown. A reveal that no longer matches the board is skipped. Any recorded move dismisses the hint; changing a checked cell drops its Check mark.
+  - Once `Solved`, every action that would change the session is ignored.
+  - `GameSession` is not `@Serializable` (Room stores its fields, §6.1); `History`/`Move` are, for the `history` column. The `Hint` data types (`core/hint/Hint.kt`) exist already; `HintEngine` follows in milestone 10.
+  - `MistakeChecker` (conflicts, wrong cells, wrong notes) and `NotesOps` (candidates, auto-notes, auto-remove) are shared with the UI mapper and the hint engine.
 
 ---
 

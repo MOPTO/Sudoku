@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:21:54.629Z" hostname="DIBILPC" time="0.12">
+<testsuite name="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:34:22.951Z" hostname="DIBILPC" time="0.151">
   <properties/>
-  <testcase name="digsUniquePuzzlesWithinBounds()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.027"/>
-  <testcase name="sameRandomSameGivens()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.004"/>
-  <testcase name="keepsDiggingBelowTheTargetToReachTheTierFloor()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.07"/>
-  <testcase name="staysWithinTheTierCeiling()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.017"/>
+  <testcase name="digsUniquePuzzlesWithinBounds()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.038"/>
+  <testcase name="sameRandomSameGivens()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.005"/>
+  <testcase name="keepsDiggingBelowTheTargetToReachTheTierFloor()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.086"/>
+  <testcase name="staysWithinTheTierCeiling()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.02"/>
   <testcase name="callsCheckpointWhileDigging()" classname="com.ariadna.sudoku.core.generator.PuzzleDiggerTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ariadna.sudoku.core.generator.PuzzleGeneratorPropertyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:21:54.782Z" hostname="DIBILPC" time="1.796">
+<testsuite name="com.ariadna.sudoku.core.generator.PuzzleGeneratorPropertyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-30T16:34:23.132Z" hostname="DIBILPC" time="1.993">
   <properties/>
-  <testcase name="generatedPuzzlesSatisfyAllInvariants()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorPropertyTest" time="1.795"/>
+  <testcase name="generatedPuzzlesSatisfyAllInvariants()" classname="com.ariadna.sudoku.core.generator.PuzzleGeneratorPropertyTest" time="1.993"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
