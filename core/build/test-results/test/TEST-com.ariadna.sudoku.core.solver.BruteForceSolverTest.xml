@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ariadna.sudoku.core.solver.BruteForceSolverTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-09-30T15:36:23.693Z" hostname="DIBILPC" time="0.04">
+  <properties/>
+  <testcase name="solvesHardPuzzleNeedingSearch()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.013"/>
+  <testcase name="solvesKnownClassicPuzzle()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.001"/>
+  <testcase name="invalidGridHasNoSolution()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.001"/>
+  <testcase name="solutionWithOneBlankPerRowSolvesBack()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.006"/>
+  <testcase name="emptyGridHasManySolutions()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.002"/>
+  <testcase name="ambiguousPuzzleReportsMultiple()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.001"/>
+  <testcase name="emptyGridSolvesToValidRandomGrid()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.012"/>
+  <testcase name="randomSolveIsDeterministicPerSeed()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.001"/>
+  <testcase name="unsolvableWithoutDirectDuplicateHasNoSolution()" classname="com.ariadna.sudoku.core.solver.BruteForceSolverTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ariadna.sudoku.core.solver.SolverBenchmarkTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-30T15:36:23.734Z" hostname="DIBILPC" time="0.078">
+  <properties/>
+  <testcase name="uniquenessCheckTiming()" classname="com.ariadna.sudoku.core.solver.SolverBenchmarkTest" time="0.078"/>
+  <system-out><![CDATA[countSolutions 6x6 (12 clues): p50=0.014 ms, p95=0.048 ms
+countSolutions 9x9 (28 clues): p50=0.025 ms, p95=0.034 ms
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

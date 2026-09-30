@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ariadna.sudoku.core.model.CandidatesTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-30T15:36:23.615Z" hostname="DIBILPC" time="0.042">
+  <properties/>
+  <testcase name="allDigitsForEverySize()" classname="com.ariadna.sudoku.core.model.CandidatesTest" time="0.029"/>
+  <testcase name="single()" classname="com.ariadna.sudoku.core.model.CandidatesTest" time="0.001"/>
+  <testcase name="setOperations()" classname="com.ariadna.sudoku.core.model.CandidatesTest" time="0.001"/>
+  <testcase name="basicOperations()" classname="com.ariadna.sudoku.core.model.CandidatesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

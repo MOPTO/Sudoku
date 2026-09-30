@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ariadna.sudoku.core.model.HousesTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-30T15:36:23.813Z" hostname="DIBILPC" time="0.019">
+  <properties/>
+  <testcase name="invalidSpecIsRejected()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.002"/>
+  <testcase name="everyCellIsInExactlyThreeHouses()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.006"/>
+  <testcase name="boxesMatchCellIndexHelper()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.001"/>
+  <testcase name="housesAreCachedPerSpec()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.001"/>
+  <testcase name="everyHouseHasSizeDistinctCells()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.001"/>
+  <testcase name="houseAndPeerCounts()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.002"/>
+  <testcase name="peerRelationIsSymmetricAndExcludesSelf()" classname="com.ariadna.sudoku.core.model.HousesTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
